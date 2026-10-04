@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <title>Clinical Tracker</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Clinical Tracker</h1>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-view="log" role="tab">Log patient</button>
+      <button class="tab" data-view="stats" role="tab">Stats</button>
+      <button class="tab" data-view="history" role="tab">History</button>
+      <button class="tab" data-view="settings" role="tab">Settings</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- LOG -->
+    <section id="view-log" class="view active">
+      <div class="today-strip">
+        <div><span id="today-patients" class="big">0</span><span class="lbl">patients today</span></div>
+        <div><span id="today-interventions" class="big">0</span><span class="lbl">interventions today</span></div>
+      </div>
+
+      <form id="encounter-form" autocomplete="off">
+        <input type="hidden" id="edit-id">
+        <div class="card">
+          <h2>Date</h2>
+          <input type="date" id="f-date" required>
+        </div>
+
+        <div class="card">
+          <h2>Age (by decade)</h2>
+          <div id="f-age" class="chips radio"></div>
+        </div>
+
+        <div class="card">
+          <h2>Sex</h2>
+          <div id="f-sex" class="chips radio"></div>
+        </div>
+
+        <div class="card">
+          <h2>Presenting problem / condition</h2>
+          <div id="f-conditions" class="checks"></div>
+          <input type="text" id="f-condition-other" placeholder="Other (optional)">
+        </div>
+
+        <div class="card">
+          <h2>Interventions performed</h2>
+          <div id="f-interventions" class="checks"></div>
+          <input type="text" id="f-intervention-other" placeholder="Other (optional)">
+        </div>
+
+        <div class="card">
+          <h2>Notes</h2>
+          <textarea id="f-notes" rows="2" placeholder="Optional. Do not enter names or identifiable details."></textarea>
+        </div>
+
+        <div class="actions sticky">
+          <button type="button" id="btn-clear" class="secondary">Clear</button>
+          <button type="submit" id="btn-save" class="primary">Save patient</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- STATS -->
+    <section id="view-stats" class="view">
+      <div class="card">
+        <div class="range">
+          <label>Period
+            <select id="s-range">
+              <option value="today">Today</option>
+              <option value="week">This week</option>
+              <option value="month" selected>This month</option>
+              <option value="year">This year</option>
+              <option value="all">All time</option>
+              <option value="custom">Custom…</option>
+            </select>
+          </label>
+          <span id="s-custom" hidden>
+            <input type="date" id="s-from"> – <input type="date" id="s-to">
+          </span>
+        </div>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><span id="k-patients" class="big">0</span><span class="lbl">Patients</span></div>
+        <div class="kpi"><span id="k-interventions" class="big">0</span><span class="lbl">Interventions</span></div>
+        <div class="kpi"><span id="k-avg" class="big">0</span><span class="lbl">Interventions / patient</span></div>
+        <div class="kpi"><span id="k-days" class="big">0</span><span class="lbl">Days worked</span></div>
+      </div>
+      <div class="card"><h2>Interventions</h2><div id="c-interventions" class="bars"></div></div>
+      <div class="card"><h2>Conditions</h2><div id="c-conditions" class="bars"></div></div>
+      <div class="card"><h2>Age</h2><div id="c-age" class="bars"></div></div>
+      <div class="card"><h2>Sex</h2><div id="c-sex" class="bars"></div></div>
+      <div class="card"><h2>Patients per day</h2><div id="c-days" class="bars"></div></div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="view-history" class="view">
+      <div class="card">
+        <input type="search" id="h-search" placeholder="Search conditions, interventions, notes…">
+      </div>
+      <div id="h-list"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="view-settings" class="view">
+      <div class="card">
+        <h2>Interventions checklist</h2>
+        <p class="hint">One per line. Changes apply to new entries; existing records keep their values.</p>
+        <textarea id="set-interventions" rows="10"></textarea>
+      </div>
+      <div class="card">
+        <h2>Conditions checklist</h2>
+        <p class="hint">One per line.</p>
+        <textarea id="set-conditions" rows="10"></textarea>
+      </div>
+      <div class="actions">
+        <button id="btn-reset-lists" class="secondary">Restore defaults</button>
+        <button id="btn-save-lists" class="primary">Save checklists</button>
+      </div>
+
+      <div class="card">
+        <h2>Your data</h2>
+        <p class="hint">Data is stored only on this device, in this browser. Export regularly to keep a backup.</p>
+        <div class="btn-row">
+          <button id="btn-export-csv" class="secondary">Export CSV</button>
+          <button id="btn-export-json" class="secondary">Backup (JSON)</button>
+          <label class="secondary filebtn">Restore backup<input type="file" id="file-import" accept="application/json,.json" hidden></label>
+          <button id="btn-wipe" class="danger">Delete all data</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
