@@ -17,11 +17,14 @@
       <button class="tab active" data-view="log" role="tab">Log patient</button>
       <button class="tab" data-view="stats" role="tab">Stats</button>
       <button class="tab" data-view="history" role="tab">History</button>
+      <button class="tab" data-view="equipment" role="tab">Equipment <span id="equip-badge" class="tab-badge" hidden></span></button>
       <button class="tab" data-view="settings" role="tab">Settings</button>
     </nav>
   </header>
 
   <main>
+    <button id="equip-alert" class="alert" hidden></button>
+
     <!-- LOG -->
     <section id="view-log" class="view active">
       <div class="today-strip">
@@ -110,6 +113,45 @@
       <div id="h-list"></div>
     </section>
 
+    <!-- EQUIPMENT -->
+    <section id="view-equipment" class="view">
+      <div class="today-strip three">
+        <div><span id="e-count-expired" class="big st-expired">0</span><span class="lbl">expired</span></div>
+        <div><span id="e-count-due" class="big st-due">0</span><span class="lbl" id="e-due-label">due soon</span></div>
+        <div><span id="e-count-ok" class="big st-ok">0</span><span class="lbl">in date</span></div>
+      </div>
+
+      <div class="actions">
+        <button type="button" id="btn-equip-add" class="primary">+ Add equipment</button>
+      </div>
+
+      <form id="equip-form" class="card" autocomplete="off" hidden>
+        <h2 id="equip-form-title">Add equipment</h2>
+        <input type="hidden" id="eq-id">
+        <div class="fields">
+          <label class="field">Name / item *<input type="text" id="eq-name" required placeholder="e.g. Adrenaline 1mg/1ml"></label>
+          <label class="field">Expiry date *<input type="date" id="eq-expiry" required></label>
+          <label class="field">Category<input type="text" id="eq-category" list="eq-category-list" placeholder="e.g. Drugs, Airway, Dressings"></label>
+          <label class="field">Location<input type="text" id="eq-location" list="eq-location-list" placeholder="e.g. Crash trolley, Bag 2"></label>
+          <label class="field">Quantity<input type="number" id="eq-qty" min="0" step="1" value="1"></label>
+          <label class="field">Lot / batch / serial<input type="text" id="eq-lot"></label>
+        </div>
+        <label class="field">Notes<textarea id="eq-notes" rows="2"></textarea></label>
+        <datalist id="eq-category-list"></datalist>
+        <datalist id="eq-location-list"></datalist>
+        <div class="actions">
+          <button type="button" id="btn-equip-cancel" class="secondary">Cancel</button>
+          <button type="submit" id="btn-equip-save" class="primary">Save equipment</button>
+        </div>
+      </form>
+
+      <div class="card">
+        <input type="search" id="e-search" placeholder="Search name, category, location, lot…">
+        <div id="e-filter" class="chips radio filter"></div>
+      </div>
+      <div id="e-list"></div>
+    </section>
+
     <!-- SETTINGS -->
     <section id="view-settings" class="view">
       <div class="card">
@@ -128,13 +170,28 @@
       </div>
 
       <div class="card">
+        <h2>Equipment expiry alerts</h2>
+        <label class="field">Warn me this many days before expiry
+          <input type="number" id="set-warn-days" min="1" max="365" step="1">
+        </label>
+        <p class="hint" id="notif-status"></p>
+        <div class="btn-row">
+          <button id="btn-save-warn" class="primary">Save</button>
+          <button id="btn-notify" class="secondary">Enable notifications</button>
+          <button id="btn-export-ics" class="secondary">Add expiry dates to calendar</button>
+        </div>
+        <p class="hint calendar-hint">The calendar file (.ics) adds an event on each expiry date with reminders, so your phone's calendar alerts you even when this app is closed.</p>
+      </div>
+
+      <div class="card">
         <h2>Your data</h2>
         <p class="hint">Data is stored only on this device, in this browser. Export regularly to keep a backup.</p>
         <div class="btn-row">
           <button id="btn-export-csv" class="secondary">Export CSV</button>
+          <button id="btn-export-equip-csv" class="secondary">Export equipment CSV</button>
           <button id="btn-export-json" class="secondary">Backup (JSON)</button>
           <label class="secondary filebtn">Restore backup<input type="file" id="file-import" accept="application/json,.json" hidden></label>
-          <button id="btn-wipe" class="danger">Delete all data</button>
+          <button id="btn-wipe" class="danger">Delete all patient records</button>
         </div>
       </div>
     </section>
