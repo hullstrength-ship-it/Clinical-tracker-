@@ -1,5 +1,5 @@
 // Offline cache: serve app shell from cache, refresh it in the background.
-const CACHE = 'clinical-tracker-v2';
+const CACHE = 'clinical-tracker-v1';
 const ASSETS = ['./', 'index.html', 'styles.css', 'app.js', 'manifest.json', 'icon.svg'];
 
 self.addEventListener('install', (e) => {
@@ -25,19 +25,6 @@ self.addEventListener('fetch', (e) => {
         })
         .catch(() => cached);
       return cached || network;
-    })
-  );
-});
-
-// Tapping an expiry notification opens (or focuses) the app on the Equipment tab.
-self.addEventListener('notificationclick', (e) => {
-  e.notification.close();
-  const url = new URL((e.notification.data && e.notification.data.url) || './', self.registration.scope).href;
-  e.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((wins) => {
-      const win = wins[0];
-      if (win) return win.focus().then((w) => (w || win).navigate(url)).catch(() => self.clients.openWindow(url));
-      return self.clients.openWindow(url);
     })
   );
 });
