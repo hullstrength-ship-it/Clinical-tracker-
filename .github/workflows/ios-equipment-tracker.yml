@@ -1,0 +1,29 @@
+# Compiles the Equipment Tracker iPhone app on a Mac runner to catch build errors.
+name: Equipment Tracker iOS build
+
+on:
+  push:
+    paths:
+      - 'equipment-tracker-ios/**'
+      - '.github/workflows/ios-equipment-tracker.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: equipment-tracker-ios/EquipmentTracker.swiftpm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show Xcode version
+        run: xcodebuild -version
+      - name: List schemes
+        run: xcodebuild -list
+      - name: Build for iOS Simulator
+        run: |
+          xcodebuild build \
+            -scheme "Equipment Tracker" \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO
